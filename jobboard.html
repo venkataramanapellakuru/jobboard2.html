@@ -30,8 +30,9 @@
     font-size: 36px;
     font-weight: bold;
     background-image: linear-gradient(45deg, #FF5733, #FFC300, #DAF7A6, #3D5A80);
+    color: transparent;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   .search-box {
     padding: 10px;
@@ -86,17 +87,17 @@
   }
 
   /* Filter button colors */
-  #filterSelect {
+  .filter {
     background-color: #ffc107; /* Yellow background color */
     color: #333; /* Text color */
   }
 
-  #experienceSelect {
+  .experience-filter {
     background-color: #28a745; /* Green background color */
     color: #fff; /* White text color */
   }
 
-  #remoteSelect {
+  .remote-filter {
     background-color: #dc3545; /* Red background color */
     color: #fff; /* White text color */
   }
@@ -130,13 +131,13 @@
         <option value="backend">Backend</option>
         <option value="uiux">UI/UX</option>
       </select>
-      <select class="filter" id="experienceSelect">
+      <select class="filter experience-filter" id="experienceSelect">
         <option value="">Experience</option>
         <option value="entry">Entry</option>
         <option value="intermediate">Intermediate</option>
         <option value="senior">Senior</option>
       </select>
-      <select class="filter" id="remoteSelect">
+      <select class="filter remote-filter" id="remoteSelect">
         <option value="">Remote</option>
         <option value="true">Yes</option>
         <option value="false">No</option>
@@ -205,3 +206,4 @@
 </script>
 </body>
 </html>
+
