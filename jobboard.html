@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Board</title>
+<style>
+  /* Basic CSS styling */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e9ecef; /* New background color */
+  }
+  .container {
+    max-width: 1200px; /* Increased max-width */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff; /* White background for the content */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Drop shadow effect */
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .logo {
+    font-size: 36px;
+    font-weight: bold;
+    background-image: linear-gradient(45deg, #FF5733, #FFC300, #DAF7A6, #3D5A80);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .search-box {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex-grow: 1;
+    margin-right: 20px;
+    max-width: 300px;
+  }
+  .filter {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .filter:hover {
+    background-color: #f0f0f0; /* Lighter color on hover */
+  }
+  .job {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .job:hover {
+    background-color: #f9f9f9; /* Light gray background on hover */
+  }
+  .company {
+    color: #007bff; /* Blue color for company names */
+    font-weight: bold;
+  }
+  .description {
+    color: #6c757d; /* Gray color for descriptions */
+    font-style: italic;
+  }
+
+  /* Button styling */
+  .search-button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Blue background color */
+    color: #fff; /* White text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .search-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+
+  /* Filter button colors */
+  #filterSelect {
+    background-color: #ffc107; /* Yellow background color */
+    color: #333; /* Text color */
+  }
+
+  #experienceSelect {
+    background-color: #28a745; /* Green background color */
+    color: #fff; /* White text color */
+  }
+
+  #remoteSelect {
+    background-color: #dc3545; /* Red background color */
+    color: #fff; /* White text color */
+  }
+
+  /* Responsive CSS */
+  @media screen and (max-width: 600px) {
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .search-box {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+    .filter {
+      margin-top: 10px;
+      margin-right: 0;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">NeedHunt</div>
+    <div>
+      <input type="text" placeholder="Search jobs..." class="search-box" id="searchInput">
+      <select class="filter" id="filterSelect">
+        <option value="">Filter by...</option>
+        <option value="frontend">Frontend</option>
+        <option value="backend">Backend</option>
+        <option value="uiux">UI/UX</option>
+      </select>
+      <select class="filter" id="experienceSelect">
+        <option value="">Experience</option>
+        <option value="entry">Entry</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="senior">Senior</option>
+      </select>
+      <select class="filter" id="remoteSelect">
+        <option value="">Remote</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+      <button class="search-button" onclick="filterJobs()">Search</button>
+    </div>
+  </div>
+  <div id="jobList"></div>
+</div>
+<script>
+  // Sample job data
+  const jobs = [
+    { title: 'Frontend Developer', company: 'ABC Inc.', location: 'New York', category: 'frontend', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', experience: 'intermediate', remote: false },
+    { title: 'Backend Developer', company: 'XYZ Corp.', location: 'San Francisco', category: 'backend', description: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.', experience: 'senior', remote: true },
+    { title: 'UI/UX Designer', company: '123 Designs', location: 'Chicago', category: 'uiux', description: 'Nulla facilisi. Fusce non justo nec ante malesuada malesuada.', experience: 'entry', remote: false },
+    { title: 'Software Engineer', company: 'Tech Solutions Ltd.', location: 'Los Angeles', category: 'backend', description: 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In hac habitasse platea dictumst.', experience: 'senior', remote: false },
+    { title: 'Graphic Designer', company: 'Creative Minds Inc.', location: 'Seattle', category: 'uiux', description: 'Sed pretium lacinia nibh, nec consectetur libero consectetur id.', experience: 'intermediate', remote: true },
+    { title: 'Full Stack Developer', company: 'Web Wizards LLC', location: 'Boston', category: 'frontend', description: 'Donec ut felis at arcu rhoncus tempor.', experience: 'senior', remote: false }
+  ];
+
+  // Function to display jobs
+  function displayJobs(jobsToShow) {
+    const jobListContainer = document.getElementById('jobList');
+    jobListContainer.innerHTML = ''; // Clear previous content
+    jobsToShow.forEach(job => {
+      const jobElement = document.createElement('div');
+      jobElement.classList.add('job');
+      jobElement.innerHTML = `
+        <h3>${job.title}</h3>
+        <p><span class="company">${job.company}</span> - ${job.location}</p>
+        <p class="description">${job.description}</p>
+        <p><strong>Experience:</strong> ${job.experience.charAt(0).toUpperCase() + job.experience.slice(1)}</p>
+        <p><strong>Remote:</strong> ${job.remote ? 'Yes' : 'No'}</p>
+      `;
+      jobListContainer.appendChild(jobElement);
+    });
+  }
+
+  // Function to filter jobs based on search query
+  function filterJobs() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const categoryFilter = document.getElementById('filterSelect').value.toLowerCase();
+    const experienceFilter = document.getElementById('experienceSelect').value.toLowerCase();
+    const remoteFilter = document.getElementById('remoteSelect').value;
+    
+    let filteredJobs = jobs;
+
+    if (searchInput.trim() !== '') {
+      filteredJobs = filteredJobs.filter(job => job.title.toLowerCase().includes(searchInput));
+    }
+    if (categoryFilter !== '') {
+      filteredJobs = filteredJobs.filter(job => job.category === categoryFilter);
+    }
+    if (experienceFilter !== '') {
+      filteredJobs = filteredJobs.filter(job => job.experience === experienceFilter);
+    }
+    if (remoteFilter !== '') {
+      filteredJobs = filteredJobs.filter(job => job.remote.toString() === remoteFilter);
+    }
+    
+    displayJobs(filteredJobs);
+  }
+
+  // Call the displayJobs function to show initial job listings
+  displayJobs(jobs);
+</script>
+</body>
+</html>
